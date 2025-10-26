@@ -6,7 +6,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver } from '@nestjs/apollo';
 import { join } from 'path';
 import { CategoryModule } from './modules/category/category.module';
-import { ExpenseModule } from './expense/expense.module';
+import { ExpenseModule } from './modules/expense/expense.module';
 import { Category } from './schemas/category.schema';
 import { Expense } from './schemas/expense.schema';
 

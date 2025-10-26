@@ -47,7 +47,7 @@ export class CategoryResolver {
   }
 
   @Query(() => CategoryAnalytics)
-  categoryTotalsPerSegment(
+  categoryAnalytics(
     @Args('input') input: AnalyticsInput,
   ): Promise<CategoryAnalytics> {
     return this.analyticsService.getCategoryTotals(input);

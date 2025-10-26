@@ -38,7 +38,7 @@ export class CategoryService {
     updateCategoryInput: UpdateCategoryInput,
   ): Promise<Category> {
     const updated = await this.categoryModel
-      .findByIdAndUpdate(id, updateCategoryInput, { new: true })
+      .findByIdAndUpdate(id, updateCategoryInput)
       .exec();
 
     return this.checkCategory(updated, id);

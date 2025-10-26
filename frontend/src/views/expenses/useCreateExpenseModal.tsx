@@ -10,7 +10,7 @@ import {
 import { Modal } from '../../components';
 import { useForm } from 'react-hook-form';
 import { useCreateExpense, useUpdateExpense } from '../../query';
-import { ICategory, IExpense, IExpenseForm } from '../../types';
+import {ICategory, IExpense, IExpenseForm, IExpenseRawForm} from '../../types';
 
 interface TProps {
   reload: () => void;
@@ -29,13 +29,17 @@ export const useCreateExpenseModal = ({ reload, categories }: TProps) => {
     register,
     handleSubmit,
     reset,
-    watch,
     formState: { errors },
-  } = useForm<IExpenseForm>();
-  const onSubmit = async (values: IExpenseForm) => {
-    const response = await (hasId(values)
-      ? updateExpense.mutateAsync(values)
-      : createExpense.mutateAsync(values));
+  } = useForm<IExpenseRawForm>();
+  const onSubmit = async (values: IExpenseRawForm) => {
+    const newExpense = {
+      ...values,
+      amount: parseFloat(values.amount),
+    }
+
+    const response = await (hasId(newExpense)
+      ? updateExpense.mutateAsync(newExpense)
+      : createExpense.mutateAsync(newExpense));
     if (response) {
       handleOnClose();
       reload();
@@ -47,7 +51,7 @@ export const useCreateExpenseModal = ({ reload, categories }: TProps) => {
     reset({
       _id: expense._id,
       name: expense.name,
-      amount: expense.amount,
+      amount: expense.amount.toString(),
       category: expense.category?._id,
     });
   };

@@ -3,7 +3,7 @@ import { CategoryService } from './category.service';
 import { CategoryResolver } from './category.resolver';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Category, CategorySchema } from '../../schemas/category.schema';
-import { ExpenseModule } from '../../expense/expense.module';
+import { ExpenseModule } from '../expense/expense.module';
 import { AnalyticsService } from './analitic.service';
 import { Expense, ExpenseSchema } from '../../schemas/expense.schema';
 

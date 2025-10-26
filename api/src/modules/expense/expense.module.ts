@@ -2,9 +2,9 @@ import { forwardRef, Module } from '@nestjs/common';
 import { ExpenseService } from './expense.service';
 import { ExpenseResolver } from './expense.resolver';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Expense, ExpenseSchema } from '../schemas/expense.schema';
-import { CategoryModule } from '../modules/category/category.module';
-import { Category, CategorySchema } from '../schemas/category.schema';
+import { Expense, ExpenseSchema } from '../../schemas/expense.schema';
+import { CategoryModule } from '../category/category.module';
+import { Category, CategorySchema } from '../../schemas/category.schema';
 
 @Module({
   imports: [

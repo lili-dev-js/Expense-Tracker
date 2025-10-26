@@ -64,7 +64,7 @@ export class AnalyticsService {
           categoryName: { $first: '$categoryName' },
           segments: {
             $push: {
-              index: '$_id.segmentIndex', // <-- poprawnie przypisany index
+              index: '$_id.segmentIndex',
               totalAmount: '$totalAmount',
               segmentStart: {
                 $arrayElemAt: [segmentDates, '$_id.segmentIndex'],

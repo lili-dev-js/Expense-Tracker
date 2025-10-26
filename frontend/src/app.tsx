@@ -1,11 +1,12 @@
 import React from 'react';
 import './App.css';
-import { Box, ChakraProvider, defaultSystem } from '@chakra-ui/react';
+import { ChakraProvider, defaultSystem } from '@chakra-ui/react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Header } from './components';
 import { Toaster } from './components/ui/toaster';
 import {CategoriesView, ExpensesView} from './views';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {AnalyticsView} from "./views/analytics";
 
 const queryClient = new QueryClient();
 
@@ -14,9 +15,9 @@ const router = createBrowserRouter([
     path: '/',
     element: <Header />,
     children: [
-      { index: true, element: <Box /> },
       { path: 'categories', element: <CategoriesView /> },
       { path: 'expenses', element: <ExpensesView /> },
+      { index: true, path: 'analytics', element: <AnalyticsView /> },
     ],
   },
 ]);

@@ -1,6 +1,6 @@
 import { Resolver, Mutation, Query, Args, ID } from '@nestjs/graphql';
 import { ExpenseService } from './expense.service';
-import { Expense } from '../schemas/expense.schema';
+import { Expense } from '../../schemas/expense.schema';
 import { CreateExpenseInput } from './dto/create-expense.input';
 import { UpdateExpenseInput } from './dto/update-expense.input';
 

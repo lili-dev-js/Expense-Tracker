@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "@chakra-ui/react": "^3.27.0",
+    "@nivo/line": "^0.99.0",
+    "@nivo/pie": "^0.99.0",
     "@tanstack/react-query": "^5.90.5",
     "axios": "^1.12.2",
     "css-select": "^6.0.0",

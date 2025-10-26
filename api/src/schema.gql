@@ -59,7 +59,7 @@ type Mutation {
 }
 
 type Query {
-  categoryTotalsPerSegment(input: AnalyticsInput!): CategoryAnalytics!
+  categoryAnalytics(input: AnalyticsInput!): CategoryAnalytics!
   findAllCategories: [Category!]!
   findAllExpenses: [Expense!]!
   findCategory(id: ID!): Category!

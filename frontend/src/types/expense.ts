@@ -15,3 +15,10 @@ export interface IExpenseForm {
   category: string;
   _id?: string;
 }
+
+export interface IExpenseRawForm {
+  name: string;
+  amount: string;
+  category: string;
+  _id?: string;
+}
