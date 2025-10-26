@@ -4,7 +4,7 @@ import { Box, ChakraProvider, defaultSystem } from '@chakra-ui/react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Header } from './components';
 import { Toaster } from './components/ui/toaster';
-import { CategoriesView } from './views';
+import {CategoriesView, ExpensesView} from './views';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient();
@@ -16,6 +16,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Box /> },
       { path: 'categories', element: <CategoriesView /> },
+      { path: 'expenses', element: <ExpensesView /> },
     ],
   },
 ]);

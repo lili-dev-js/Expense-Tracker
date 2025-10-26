@@ -2,11 +2,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { request } from 'graphql-request';
 import {
   FIND_ALL_CATEGORIES,
-  FIND_CATEGORY,
   CREATE_CATEGORY,
   UPDATE_CATEGORY,
   REMOVE_CATEGORY,
-} from '../queries';
+} from '../graphql';
 import {ICategory} from "../types";
 
 const endpoint = 'http://localhost:3096/graphql';
