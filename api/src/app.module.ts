@@ -2,23 +2,29 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Author, AuthorSchema } from './schemas/author.schema';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { ApolloDriver } from '@nestjs/apollo';
 import { join } from 'path';
-import { AuthorsResolver } from './authors.resolver';
+import { CategoryModule } from './modules/category/category.module';
+import { ExpenseModule } from './expense/expense.module';
+import { Category } from './schemas/category.schema';
+import { Expense } from './schemas/expense.schema';
 
 @Module({
   imports: [
     MongooseModule.forRoot(process.env.MONGODB_URI as string),
-    MongooseModule.forFeature([{ name: Author.name, schema: AuthorSchema }]),
-    GraphQLModule.forRoot<ApolloDriverConfig>({
+    GraphQLModule.forRoot({
       driver: ApolloDriver,
       playground: true,
+      sortSchema: true,
+      debug: true,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      orphanedTypes: [Expense, Category],
     }),
+    ExpenseModule,
+    CategoryModule,
   ],
   controllers: [AppController],
-  providers: [AppService, AuthorsResolver],
+  providers: [AppService],
 })
 export class AppModule {}

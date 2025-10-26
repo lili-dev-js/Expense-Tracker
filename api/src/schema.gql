@@ -2,12 +2,95 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Author {
+input AnalyticsInput {
+  endDate: DateTime!
+  startDate: DateTime!
+}
+
+type Category {
   _id: ID!
+  createdAt: DateTime
+  expenses: [Expense!]
   name: String!
-  age: Float
+  updatedAt: DateTime
+}
+
+type CategoryAnalytics {
+  categoryAnalytics: [SumCategory!]!
+  segmentDates: [DateTime!]!
+}
+
+input CreateCategoryInput {
+  name: String!
+}
+
+input CreateExpenseInput {
+  """Amount of the expense"""
+  amount: Float!
+
+  """Category ID for this expense"""
+  category: ID!
+
+  """Name of the expense"""
+  name: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Expense {
+  _id: ID!
+  amount: Float
+  category: Category
+  createdAt: DateTime
+  name: String!
+  updatedAt: DateTime
+}
+
+type Mutation {
+  createCategory(createCategoryInput: CreateCategoryInput!): Category!
+  createExpense(createExpenseInput: CreateExpenseInput!): Expense!
+  removeCategory(id: ID!): Category!
+  removeExpense(id: ID!): Expense!
+  updateCategory(updateCategoryInput: UpdateCategoryInput!): Category!
+  updateExpense(updateExpenseInput: UpdateExpenseInput!): Expense!
 }
 
 type Query {
-  authors: [Author!]!
+  categoryTotalsPerSegment(input: AnalyticsInput!): CategoryAnalytics!
+  findAllCategories: [Category!]!
+  findAllExpenses: [Expense!]!
+  findCategory(id: ID!): Category!
+  findExpense(id: ID!): Expense!
+}
+
+type SumCategory {
+  categoryId: ID!
+  categoryName: String!
+  segments: [SumSegmentCategory!]!
+}
+
+type SumSegmentCategory {
+  index: Int!
+  totalAmount: Float!
+}
+
+input UpdateCategoryInput {
+  _id: ID!
+  name: String
+}
+
+input UpdateExpenseInput {
+  _id: ID!
+
+  """Amount of the expense"""
+  amount: Float
+
+  """Category ID for this expense"""
+  category: ID
+
+  """Name of the expense"""
+  name: String
 }
