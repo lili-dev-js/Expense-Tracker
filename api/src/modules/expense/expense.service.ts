@@ -92,12 +92,21 @@ export class ExpenseService {
     id: string,
     updateExpenseInput: UpdateExpenseInput,
   ): Promise<Expense> {
+    const updateData: any = { ...updateExpenseInput };
+
     if (updateExpenseInput.category) {
       await this.ensureCategoryExists(updateExpenseInput.category);
     }
 
     const updatedExpense = await this.expenseModel
-      .findByIdAndUpdate(id, updateExpenseInput, { new: true })
+      .findByIdAndUpdate(
+        id,
+        {
+          ...updateData,
+          category: new Types.ObjectId(updateExpenseInput.category),
+        },
+        { new: true },
+      )
       .populate('category')
       .exec();
 

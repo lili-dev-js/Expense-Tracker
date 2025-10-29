@@ -27,53 +27,64 @@ export class AnalyticsService {
       (_, i) => new Date(startTime + i * segmentMs),
     );
 
-    const result = await this.expenseModel.aggregate([
-      { $match: { createdAt: { $gte: input.startDate, $lte: input.endDate } } },
+    const result = await this.categoryModel.aggregate([
       {
         $lookup: {
-          from: 'categories',
-          localField: 'category',
-          foreignField: '_id',
-          as: 'category',
+          from: 'expenses',
+          let: { categoryId: '$_id' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ['$category', '$$categoryId'] },
+                    { $gte: ['$paymentDate', input.startDate] },
+                    { $lte: ['$paymentDate', input.endDate] },
+                  ],
+                },
+              },
+            },
+            {
+              $addFields: {
+                segmentIndex: {
+                  $floor: {
+                    $divide: [
+                      { $subtract: [{ $ifNull: ['$paymentDate', input.startDate] }, input.startDate] },
+                      segmentMs,
+                    ],
+                  },
+                },
+              },
+            },
+          ],
+          as: 'expenses',
         },
       },
-      { $unwind: '$category' },
       {
         $addFields: {
-          segmentIndex: {
-            $floor: {
-              $divide: [
-                { $subtract: ['$createdAt', input.startDate] },
-                segmentMs,
-              ],
-            },
-          },
-        },
-      },
-      {
-        $group: {
-          _id: { category: '$category._id', segmentIndex: '$segmentIndex' },
-          categoryName: { $first: '$category.name' },
-          totalAmount: { $sum: '$amount' },
-          index: { $sum: 1 },
-        },
-      },
-      {
-        $group: {
-          _id: '$_id.category',
-          categoryName: { $first: '$categoryName' },
           segments: {
-            $push: {
-              index: '$_id.segmentIndex',
-              totalAmount: '$totalAmount',
-              segmentStart: {
-                $arrayElemAt: [segmentDates, '$_id.segmentIndex'],
-              },
-              segmentEnd: {
-                $arrayElemAt: [
-                  segmentDates,
-                  { $add: ['$_id.segmentIndex', 1] },
-                ],
+            $map: {
+              input: Array.from({ length: segmentCount }, (_, i) => i),
+              as: 'i',
+              in: {
+                index: '$$i',
+                totalAmount: {
+                  $sum: {
+                    $map: {
+                      input: {
+                        $filter: {
+                          input: '$expenses',
+                          as: 'e',
+                          cond: { $eq: ['$$e.segmentIndex', '$$i'] },
+                        },
+                      },
+                      as: 'e',
+                      in: '$$e.amount',
+                    },
+                  },
+                },
+                segmentStart: { $arrayElemAt: [segmentDates, '$$i'] },
+                segmentEnd: { $arrayElemAt: [segmentDates, { $add: ['$$i', 1] }] },
               },
             },
           },
@@ -82,7 +93,7 @@ export class AnalyticsService {
       {
         $project: {
           categoryId: '$_id',
-          categoryName: 1,
+          categoryName: '$name',
           segments: 1,
         },
       },
