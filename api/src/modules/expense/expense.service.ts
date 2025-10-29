@@ -5,6 +5,7 @@ import { Expense } from '../../schemas/expense.schema';
 import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Category } from '../../schemas/category.schema';
+import { PaginatedExpensesOutput } from './dto/paginated-expenses.output';
 
 @Injectable()
 export class ExpenseService {
@@ -38,8 +39,44 @@ export class ExpenseService {
     return createdExpense.populate('category');
   }
 
-  async findAll(): Promise<Expense[]> {
-    return this.expenseModel.find().populate('category').exec();
+  async findAll(
+    categoryId?: string,
+    sortBy: 'createdAt' | 'updatedAt' = 'createdAt',
+    sortOrder: 'asc' | 'desc' = 'desc',
+    page = 1,
+    limit = 10,
+  ): Promise<PaginatedExpensesOutput> {
+    const filter: Record<string, any> = {};
+
+    if (categoryId) {
+      await this.ensureCategoryExists(categoryId);
+      filter.category = new Types.ObjectId(categoryId);
+    }
+
+    const skip = (page - 1) * limit;
+
+    const [data, totalRecords] = await Promise.all([
+      this.expenseModel
+        .find(filter)
+        .populate('category')
+        .sort({ [sortBy]: sortOrder === 'asc' ? 1 : -1 })
+        .skip(skip)
+        .limit(limit)
+        .exec(),
+      this.expenseModel.countDocuments(filter).exec(),
+    ]);
+
+    const totalPages = Math.ceil(totalRecords / limit);
+
+    return {
+      data,
+      pagination: {
+        totalRecords,
+        totalPages,
+        currentPage: page,
+        limit,
+      },
+    };
   }
 
   async findOne(id: string): Promise<Expense> {

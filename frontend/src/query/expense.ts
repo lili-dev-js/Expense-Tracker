@@ -7,17 +7,31 @@ import {
   REMOVE_EXPENSE,
 } from '../graphql';
 import { IExpense } from '../types';
+import {IPagination} from "../types/comon";
 
 const endpoint = 'http://localhost:3096/graphql';
 
-export const useFindAllExpenses = () =>
-  useQuery({
-    queryKey: ['findAllExpenses'],
-    queryFn: async (): Promise<IExpense[]> => {
-      const { findAllExpenses } = await request(endpoint, FIND_ALL_EXPENSES);
-      return findAllExpenses;
-    },
-  });
+interface FindAllExpensesFilters {
+  categoryId?: string;
+  sortBy?: 'createdAt' | 'updatedAt';
+  sortOrder?: 'asc' | 'desc';
+  page?: number;
+  limit?: number;
+}
+
+export const useFindAllExpenses = (filters?: FindAllExpensesFilters) =>
+    useQuery({
+      queryKey: ['findAllExpenses', filters],
+      queryFn: async (): Promise<IPagination<'expenses',IExpense[]>> => {
+        const response = await request(endpoint, FIND_ALL_EXPENSES, {
+          filters,
+        });
+        return ({
+          expenses:response.expenses.data,
+          pagination:response.expenses.pagination
+        })
+      },
+    });
 
 export const useCreateExpense = () => {
   const queryClient = useQueryClient();

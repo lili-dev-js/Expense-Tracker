@@ -49,6 +49,14 @@ type Expense {
   updatedAt: DateTime
 }
 
+input FindAllExpensesInput {
+  categoryId: String
+  limit: Int = 10
+  page: Int = 1
+  sortBy: String = "createdAt"
+  sortOrder: String = "desc"
+}
+
 type Mutation {
   createCategory(createCategoryInput: CreateCategoryInput!): Category!
   createExpense(createExpenseInput: CreateExpenseInput!): Expense!
@@ -58,10 +66,22 @@ type Mutation {
   updateExpense(updateExpenseInput: UpdateExpenseInput!): Expense!
 }
 
+type PaginatedExpensesOutput {
+  data: [Expense!]!
+  pagination: PaginationMeta!
+}
+
+type PaginationMeta {
+  currentPage: Int!
+  limit: Int!
+  totalPages: Int!
+  totalRecords: Int!
+}
+
 type Query {
   categoryAnalytics(input: AnalyticsInput!): CategoryAnalytics!
+  expenses(filters: FindAllExpensesInput): PaginatedExpensesOutput!
   findAllCategories: [Category!]!
-  findAllExpenses: [Expense!]!
   findCategory(id: ID!): Category!
   findExpense(id: ID!): Expense!
 }

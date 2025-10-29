@@ -1,21 +1,28 @@
 import { gql } from 'graphql-request';
 
 export const FIND_ALL_EXPENSES = gql`
-  query FindAllExpenses {
-    findAllExpenses {
-      _id
-      name
-      amount
-      category {
+  query FindAllExpenses($filters: FindAllExpensesInput) {
+    expenses(filters: $filters) {
+      data {
         _id
         name
+        amount
+        category {
+          _id
+          name
+        }
+        createdAt
+        updatedAt
       }
-      createdAt
-      updatedAt
+      pagination {
+        totalRecords
+        totalPages
+        currentPage
+        limit
+      }
     }
   }
 `;
-
 export const FIND_EXPENSE = gql`
   query FindExpense($id: ID!) {
     findExpense(id: $id) {

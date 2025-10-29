@@ -5,6 +5,8 @@ import { showDate } from '../../helpers';
 import { useAskRemoveModal } from '../../hooks/useAskRemoveModal';
 import { useCreateExpenseModal } from './useCreateExpenseModal';
 import { useFindAllCategories } from '../../query';
+import { usePagination } from '../../hooks/usePagination';
+import { useEffect } from 'react';
 
 const HEADERS = [
   { name: 'ID', key: '_id' },
@@ -27,7 +29,23 @@ const HEADERS = [
 
 export const ExpensesView = () => {
   const { data: categories } = useFindAllCategories();
-  const { data, refetch: reload, isFetching } = useFindAllExpenses();
+  const { pagination } = usePagination();
+  const { data, refetch: reload, isFetching } = useFindAllExpenses({
+      page:pagination.currentPage,
+      limit:pagination.limit
+  });
+
+  useEffect(() => {
+    if (data?.pagination) {
+      pagination.setPagination(data.pagination);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (data?.pagination && data.pagination.currentPage !== pagination.currentPage) {
+      pagination.setPagination(data.pagination);
+    }
+  }, [data?.pagination]);
 
   const removeExpense = useRemoveExpense();
   const { ExpenseFormModal, handleEditExpense, handleCreateExpense } =
@@ -50,9 +68,10 @@ export const ExpensesView = () => {
       <AskRemoveModal />
       <ExpenseFormModal />
       <DefaultTable
+        pagination={pagination}
         isFetching={isFetching}
         headers={HEADERS}
-        data={data?.map((record) => ({
+        data={data?.expenses?.map((record) => ({
           ...record,
           updatedAt: showDate(record.updatedAt),
           createdAt: showDate(record.createdAt),

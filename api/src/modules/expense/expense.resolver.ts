@@ -3,6 +3,8 @@ import { ExpenseService } from './expense.service';
 import { Expense } from '../../schemas/expense.schema';
 import { CreateExpenseInput } from './dto/create-expense.input';
 import { UpdateExpenseInput } from './dto/update-expense.input';
+import { FindAllExpensesInput } from './dto/find-all-expenses.input';
+import { PaginatedExpensesOutput } from './dto/paginated-expenses.output';
 
 @Resolver(() => Expense)
 export class ExpenseResolver {
@@ -15,9 +17,19 @@ export class ExpenseResolver {
     return this.expenseService.create(createExpenseInput);
   }
 
-  @Query(() => [Expense])
-  findAllExpenses(): Promise<Expense[]> {
-    return this.expenseService.findAll();
+  @Query(() => PaginatedExpensesOutput, { name: 'expenses' })
+  async findAllExpenses(
+    @Args('filters', { nullable: true }) filters?: FindAllExpensesInput,
+  ): Promise<PaginatedExpensesOutput> {
+    const result = await this.expenseService.findAll(
+      filters?.categoryId,
+      filters?.sortBy,
+      filters?.sortOrder,
+      filters?.page,
+      filters?.limit,
+    );
+
+    return result;
   }
 
   @Query(() => Expense)
