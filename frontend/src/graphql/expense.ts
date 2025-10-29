@@ -7,6 +7,7 @@ export const FIND_ALL_EXPENSES = gql`
         _id
         name
         amount
+        paymentDate
         category {
           _id
           name
@@ -45,6 +46,7 @@ export const CREATE_EXPENSE = gql`
       _id
       name
       amount
+      paymentDate
       category {
         _id
         name
@@ -59,6 +61,7 @@ export const UPDATE_EXPENSE = gql`
       _id
       name
       amount
+      paymentDate
       category {
         _id
         name

@@ -5,6 +5,7 @@ export interface IExpense {
     createdAt?: string;
     updatedAt?: string;
     name: string;
+    paymentDate: Date;
     amount: number;
     category?: ICategory;
     _id: string;
@@ -18,6 +19,7 @@ export interface IExpenseForm {
 }
 
 export interface IExpenseRawForm {
+    paymentDate: Date;
     name: string;
     amount: string;
     category: string;

@@ -8,6 +8,6 @@ export const SORT_ORDER = 'sortOrder';
 export const SORT_BY = 'sortBy';
 
 export const SORT_DEFAULT = {
-  [SORT_ORDER]: SORT_BY_ASC,
+  [SORT_ORDER]: SORT_BY_DESC,
   [SORT_BY]: CREATED_AT,
 };

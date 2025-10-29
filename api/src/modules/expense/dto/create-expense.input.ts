@@ -1,4 +1,11 @@
-import { InputType, Field, Float, ID, PartialType } from '@nestjs/graphql';
+import {
+  InputType,
+  Field,
+  Float,
+  ID,
+  PartialType,
+  GraphQLISODateTime,
+} from '@nestjs/graphql';
 
 @InputType()
 export class CreateExpenseInput {
@@ -10,6 +17,9 @@ export class CreateExpenseInput {
 
   @Field(() => ID, { description: 'Category ID for this expense' })
   category: string;
+
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  paymentDate?: Date;
 }
 
 @InputType()

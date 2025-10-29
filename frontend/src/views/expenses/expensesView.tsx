@@ -22,6 +22,7 @@ const HEADERS = [
   { name: 'Name', key: 'name' },
   { name: 'Amount', key: 'amount' },
   { name: 'Category', key: 'category' },
+  { name: 'Payment date', key: 'paymentDate' },
   {
     name: 'Created at',
     key: 'createdAt',
@@ -104,6 +105,7 @@ export const ExpensesView = () => {
           ...record,
           updatedAt: showDate(record.updatedAt),
           createdAt: showDate(record.createdAt),
+          paymentDate: showDate(record.paymentDate),
           category: record.category?.name || '-',
           actions: (
             <Flex>

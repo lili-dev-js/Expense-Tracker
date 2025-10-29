@@ -8,7 +8,6 @@ import {
 } from '../graphql';
 import { IExpense } from '../types';
 import {IPagination} from "../types";
-import {SORT_BY_ASC, SORT_BY_DESC} from "../constants";
 
 const endpoint = 'http://localhost:3096/graphql';
 
@@ -42,6 +41,7 @@ export const useCreateExpense = () => {
       name: string;
       amount: number;
       category: string;
+      paymentDate: Date;
     }): Promise<IExpense> => {
       const { createExpense } = await request(endpoint, CREATE_EXPENSE, {
         input,
@@ -61,6 +61,7 @@ export const useUpdateExpense = () => {
       name: string;
       amount: number;
       category: string;
+      paymentDate: Date;
     }): Promise<IExpense> => {
       const { updateExpense } = await request(endpoint, UPDATE_EXPENSE, {
         input

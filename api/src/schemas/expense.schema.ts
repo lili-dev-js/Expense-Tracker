@@ -2,7 +2,7 @@
 import { Category } from './category.schema';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { ObjectType, Field, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
 @ObjectType()
 @Schema({ timestamps: true })
@@ -27,6 +27,10 @@ export class Expense extends Document {
 
   @Field(() => Date, { nullable: true })
   updatedAt?: Date;
+
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  @Prop({ type: Date })
+  paymentDate?: Date;
 }
 
 export const ExpenseSchema = SchemaFactory.createForClass(Expense);

@@ -1,131 +1,153 @@
 import {
-  Button,
-  useDisclosure,
-  Text,
-  Input,
-  Field,
-  Flex,
-  NativeSelect,
+    Button,
+    useDisclosure,
+    Text,
+    Input,
+    Field,
+    Flex,
+    NativeSelect, Center,
 } from '@chakra-ui/react';
-import { Modal } from '../../components';
-import { useForm } from 'react-hook-form';
-import { useCreateExpense, useUpdateExpense } from '../../query';
-import {ICategory, IExpense, IExpenseForm, IExpenseRawForm} from '../../types';
+import {Modal} from '../../components';
+import {useForm} from 'react-hook-form';
+import {useCreateExpense, useUpdateExpense} from '../../query';
+import {
+    ICategory,
+    IExpense,
+    IExpenseForm,
+    IExpenseRawForm,
+} from '../../types';
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
 
 interface TProps {
-  reload: () => void;
-  categories?: ICategory[];
+    reload: () => void;
+    categories?: ICategory[];
 }
 
 const hasId = (value: IExpenseForm | IExpense): value is IExpense =>
-  typeof value._id === 'string';
+    typeof value._id === 'string';
 
-export const useCreateExpenseModal = ({ reload, categories }: TProps) => {
-  const { open, setOpen, onClose } = useDisclosure();
-  const createExpense = useCreateExpense();
-  const updateExpense = useUpdateExpense();
+export const useCreateExpenseModal = ({reload, categories}: TProps) => {
+    const {open, setOpen, onClose} = useDisclosure();
+    const createExpense = useCreateExpense();
+    const updateExpense = useUpdateExpense();
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<IExpenseRawForm>();
-  const onSubmit = async (values: IExpenseRawForm) => {
-    const newExpense = {
-      ...values,
-      amount: parseFloat(values.amount),
-    }
-
-    const response = await (hasId(newExpense)
-      ? updateExpense.mutateAsync(newExpense)
-      : createExpense.mutateAsync(newExpense));
-    if (response) {
-      handleOnClose();
-      reload();
-    }
-  };
-
-  const handleEditExpense = (expense: IExpense) => {
-    setOpen(true);
-    reset({
-      _id: expense._id,
-      name: expense.name,
-      amount: expense.amount.toString(),
-      category: expense.category?._id,
+    const {
+        register,
+        handleSubmit,
+        reset,
+        watch,
+        setValue,
+        formState: {errors},
+    } = useForm<IExpenseRawForm>({
+        defaultValues: {
+            paymentDate: new Date()
+        }
     });
-  };
+    const paymentDate = watch('paymentDate')
 
-  const handleCreateExpense = () => {
-    setOpen(true);
-  };
+    const onSubmit = async (values: IExpenseRawForm) => {
+        const newExpense = {
+            ...values,
+            amount: parseFloat(values.amount),
+        };
 
-  const handleOnClose = () => {
-    onClose();
-    reset({ name: '' });
-  };
+        const response = await (hasId(newExpense)
+            ? updateExpense.mutateAsync(newExpense)
+            : createExpense.mutateAsync(newExpense));
+        if (response) {
+            handleOnClose();
+            reload();
+        }
+    };
 
-  const ExpenseFormModal = () => (
-    <Modal tittle="Create skill" open={open} setOpen={setOpen}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Field.Root color="gray.600">
-          <Field.Label>
-            Name <Field.RequiredIndicator />
-          </Field.Label>
-          <Input
-            {...register('name', { required: true })}
-            placeholder="Enter name"
-          />
-          {errors.name && <Text color="red.500">This field is required</Text>}
-        </Field.Root>
+    const handleEditExpense = (expense: IExpense) => {
+        setOpen(true);
+        reset({
+            _id: expense._id,
+            name: expense.name,
+            paymentDate: expense.paymentDate,
+            amount: expense.amount.toString(),
+            category: expense.category?._id,
+        });
+    };
 
-        <Field.Root color="gray.600">
-          <Field.Label>
-            Amount <Field.RequiredIndicator />
-          </Field.Label>
-          <Input
-            {...register('amount', { required: true })}
-            placeholder="Enter amount"
-          />
-          {errors.name && <Text color="red.500">This field is required</Text>}
-        </Field.Root>
+    const handleCreateExpense = () => {
+        setOpen(true);
+    };
 
-        <Field.Root color="gray.600">
-          <Field.Label>
-            Category <Field.RequiredIndicator />
-          </Field.Label>
-          <NativeSelect.Root>
-            <NativeSelect.Field
-              placeholder="Select category"
-              {...register('category', { required: true })}
-            >
-              {categories?.map((category) => (
-                <option key={category._id} value={category._id}>
-                  {category.name}
-                </option>
-              ))}
-            </NativeSelect.Field>
-            <NativeSelect.Indicator />
-          </NativeSelect.Root>
-          {errors.category && <Text color="red.500">This field is required</Text>}
-        </Field.Root>
+    const handleOnClose = () => {
+        onClose();
+        reset({name: ''});
+    };
 
-        <Flex justifyContent="flex-end" mt={4}>
-          <Button
-            variant="outline"
-            colorPalette="red"
-            mr={4}
-            onClick={handleOnClose}
-          >
-            Cancel
-          </Button>
-          <Button type="submit" colorPalette="green" color="gray.50">
-            Save
-          </Button>
-        </Flex>
-      </form>
-    </Modal>
-  );
+    const ExpenseFormModal = () => (
+        <Modal tittle="Create skill" open={open} setOpen={setOpen}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <Field.Root color="gray.600">
+                    <Field.Label>
+                        Name <Field.RequiredIndicator/>
+                    </Field.Label>
+                    <Input
+                        {...register('name', {required: true})}
+                        placeholder="Enter name"
+                    />
+                    {errors.name && <Text color="red.500">This field is required</Text>}
+                </Field.Root>
+                <Field.Root color="gray.600">
+                    <Field.Label>
+                        Amount <Field.RequiredIndicator/>
+                    </Field.Label>
+                    <Input
+                        {...register('amount', {required: true})}
+                        placeholder="Enter amount"
+                    />
+                    {errors.name && <Text color="red.500">This field is required</Text>}
+                </Field.Root>
+                <Center h='40px' >
+                    <DatePicker
+                        selected={paymentDate ? new Date(paymentDate) : new Date()}
+                        onChange={(date) => date && setValue('paymentDate', date)}
+                    />
+                </Center>
 
-  return { ExpenseFormModal, handleEditExpense, handleCreateExpense };
+                <Field.Root color="gray.600">
+                    <Field.Label>
+                        Category <Field.RequiredIndicator/>
+                    </Field.Label>
+                    <NativeSelect.Root>
+                        <NativeSelect.Field
+                            placeholder="Select category"
+                            {...register('category', {required: true})}
+                        >
+                            {categories?.map((category) => (
+                                <option key={category._id} value={category._id}>
+                                    {category.name}
+                                </option>
+                            ))}
+                        </NativeSelect.Field>
+                        <NativeSelect.Indicator/>
+                    </NativeSelect.Root>
+                    {errors.category && (
+                        <Text color="red.500">This field is required</Text>
+                    )}
+                </Field.Root>
+                <Flex justifyContent="flex-end" mt={4}>
+                    <Button
+                        variant="outline"
+                        colorPalette="red"
+                        mr={4}
+                        onClick={handleOnClose}
+                    >
+                        Cancel
+                    </Button>
+                    <Button type="submit" colorPalette="green" color="gray.50">
+                        Save
+                    </Button>
+                </Flex>
+            </form>
+        </Modal>
+    );
+
+    return {ExpenseFormModal, handleEditExpense, handleCreateExpense};
 };
