@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import {IPagination, IPaginationResponse, IUsePaginationResponse} from '../types';
+import { IPaginationResponse, IUsePaginationResponse} from '../types';
 
 export const usePagination = ():{pagination:IUsePaginationResponse} => {
   const [pagination, setPagination] = useState<IPaginationResponse>({

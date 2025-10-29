@@ -7,14 +7,15 @@ import {
   REMOVE_EXPENSE,
 } from '../graphql';
 import { IExpense } from '../types';
-import {IPagination} from "../types/comon";
+import {IPagination} from "../types";
+import {SORT_BY_ASC, SORT_BY_DESC} from "../constants";
 
 const endpoint = 'http://localhost:3096/graphql';
 
 interface FindAllExpensesFilters {
   categoryId?: string;
-  sortBy?: 'createdAt' | 'updatedAt';
-  sortOrder?: 'asc' | 'desc';
+  sortBy?: string;
+  sortOrder?: string;
   page?: number;
   limit?: number;
 }

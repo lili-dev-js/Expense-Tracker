@@ -7,6 +7,15 @@ import { useCreateExpenseModal } from './useCreateExpenseModal';
 import { useFindAllCategories } from '../../query';
 import { usePagination } from '../../hooks/usePagination';
 import { useEffect } from 'react';
+import { SortSelect } from '../../components';
+import { useForm } from 'react-hook-form';
+import { SORT_DEFAULT } from '../../constants';
+import { ExpensesFilters } from './expensesFilters';
+
+const DATA_SORT_BY = [
+  { name: 'Created at', value: 'createdAt' },
+  { name: 'Update at', value: 'updatedAt' },
+];
 
 const HEADERS = [
   { name: 'ID', key: '_id' },
@@ -28,12 +37,26 @@ const HEADERS = [
 ];
 
 export const ExpensesView = () => {
-  const { data: categories } = useFindAllCategories();
-  const { pagination } = usePagination();
-  const { data, refetch: reload, isFetching } = useFindAllExpenses({
-      page:pagination.currentPage,
-      limit:pagination.limit
+  const filtersAndSortForm = useForm({
+    mode: 'onChange',
+    defaultValues: { categoryId: '', ...SORT_DEFAULT },
   });
+  const { data: categories } = useFindAllCategories();
+  const filters = filtersAndSortForm.watch();
+  const { pagination } = usePagination();
+  const {
+    data,
+    refetch: reload,
+    isFetching,
+  } = useFindAllExpenses({
+    ...filters,
+    page: pagination.currentPage,
+    limit: pagination.limit,
+  });
+
+  useEffect(() => {
+    reload();
+  }, [filters.categoryId, filters.sortBy, filters.sortOrder]);
 
   useEffect(() => {
     if (data?.pagination) {
@@ -42,7 +65,10 @@ export const ExpensesView = () => {
   }, [data]);
 
   useEffect(() => {
-    if (data?.pagination && data.pagination.currentPage !== pagination.currentPage) {
+    if (
+      data?.pagination &&
+      data.pagination.currentPage !== pagination.currentPage
+    ) {
       pagination.setPagination(data.pagination);
     }
   }, [data?.pagination]);
@@ -61,9 +87,12 @@ export const ExpensesView = () => {
     <Center maxWidth="1000px" flexDirection="column" w="100%" py={4}>
       <Flex justifyContent="flex-end" w="100%" mb={4}>
         <Button onClick={handleCreateExpense} colorPalette="green">
-          {' '}
           Add new +
         </Button>
+      </Flex>
+      <Flex justifyContent="space-between" w="100%" mb={4}>
+        <ExpensesFilters form={filtersAndSortForm} categories={categories} />
+        <SortSelect form={filtersAndSortForm} dataSortBy={DATA_SORT_BY} />
       </Flex>
       <AskRemoveModal />
       <ExpenseFormModal />
