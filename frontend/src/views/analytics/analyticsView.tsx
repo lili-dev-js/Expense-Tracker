@@ -6,7 +6,7 @@ export const AnalyticsView = () => {
   const {
     data,
   } = useAnalytics({
-    startDate: '2025-01-01T00:00:00.000Z',
+    startDate: '2025-10-01T00:00:00.000Z',
     endDate: '2025-11-01T00:00:00.000Z',
   });
 

@@ -49,7 +49,12 @@ export class AnalyticsService {
                 segmentIndex: {
                   $floor: {
                     $divide: [
-                      { $subtract: [{ $ifNull: ['$paymentDate', input.startDate] }, input.startDate] },
+                      {
+                        $subtract: [
+                          { $ifNull: ['$paymentDate', input.startDate] },
+                          input.startDate,
+                        ],
+                      },
                       segmentMs,
                     ],
                   },
@@ -84,7 +89,9 @@ export class AnalyticsService {
                   },
                 },
                 segmentStart: { $arrayElemAt: [segmentDates, '$$i'] },
-                segmentEnd: { $arrayElemAt: [segmentDates, { $add: ['$$i', 1] }] },
+                segmentEnd: {
+                  $arrayElemAt: [segmentDates, { $add: ['$$i', 1] }],
+                },
               },
             },
           },

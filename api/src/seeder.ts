@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ExpenseService } from './modules/expense/expense.service';
 import { CategoryService } from './modules/category/category.service';
-import { Category } from './schemas/category.schema'; // import typu Category
+import { Category } from './schemas/category.schema';
 
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
@@ -12,27 +12,38 @@ async function bootstrap() {
 
   const createdCategories: Category[] = [];
 
-  const categories = [
-    { name: 'shoes' },
-    { name: 'sdf' },
-  ];
-
-  for (const cat of categories) {
-    const created = await categoryService.create(cat);
+  console.log('Creating categories...');
+  for (let i = 1; i <= 5; i++) {
+    const created = await categoryService.create({ name: `Category ${i}` });
+    console.log(`Created category: ${created.name} (${created._id})`);
     createdCategories.push(created);
   }
 
-  const expenses = [
-    { name: 'nike', amount: 500, category: createdCategories[0]._id },
-    { name: 'cable', amount: 12312, category: createdCategories[1]._id },
-    { name: 'red lipstick', amount: 100, category: createdCategories[0]._id },
-  ];
+  const now = new Date();
+  const oneMonthAgo = new Date();
+  oneMonthAgo.setMonth(now.getMonth() - 1);
 
-  for (const exp of expenses) {
-    await expenseService.create(exp);
+  console.log('Creating expenses...');
+  for (const category of createdCategories) {
+    for (let j = 1; j <= 20; j++) {
+      const randomTime =
+        oneMonthAgo.getTime() +
+        Math.random() * (now.getTime() - oneMonthAgo.getTime());
+
+      const expense = await expenseService.create({
+        name: `Expense ${j} of ${category.name}`,
+        amount: Math.floor(Math.random() * 1000) + 1,
+        category: category._id,
+        paymentDate: new Date(randomTime),
+      });
+
+      console.log(
+        `Created expense: ${expense.name}, amount: ${expense.amount}`,
+      );
+    }
   }
 
-  console.log('Seeding finished!');
+  console.log('Seeder finished: 5 categories, 100 expenses created.');
   await app.close();
 }
 
